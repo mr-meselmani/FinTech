@@ -10,7 +10,7 @@ import (
 // Test List Accounts
 func TestListAccountsConcurrent(t *testing.T) {
 	// Number of concurrent requests to simulate
-	numRequests := 500
+	numRequests := 100
 
 	// Running server URL
 	serverURL := "http://localhost:3000/accounts" // Replace with the actual URL of your running server

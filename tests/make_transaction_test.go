@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"testing"
 	"time"
 )
@@ -14,6 +15,10 @@ import (
 func TestMakeTransactionConcurrent(t *testing.T) {
 	// Number of concurrent requests to simulate
 	numRequests := 100
+
+	// Wait group to ensure synchronization
+	var wg sync.WaitGroup
+	wg.Add(numRequests)
 
 	// Payload for the transaction request
 	payload := []byte(`{
@@ -25,6 +30,8 @@ func TestMakeTransactionConcurrent(t *testing.T) {
 	// Send concurrent requests
 	for i := 0; i < numRequests; i++ {
 		go func() {
+			defer wg.Done()
+
 			// Create a new request
 			req, err := http.NewRequest("POST", "http://localhost:3000/transfer", bytes.NewBuffer(payload))
 			if err != nil {
@@ -40,17 +47,16 @@ func TestMakeTransactionConcurrent(t *testing.T) {
 			}
 			defer resp.Body.Close()
 
+			// Read the response body
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				t.Errorf("Failed to read response body: %v", err)
+				return
+			}
+
 			// Verify the response status code
 			if resp.StatusCode != http.StatusOK {
 				t.Errorf("Expected status code %d, but got %d", http.StatusOK, resp.StatusCode)
-
-				// Read and print the response body
-				body, err := io.ReadAll(resp.Body)
-				if err != nil {
-					t.Errorf("Failed to read response body: %v", err)
-					return
-				}
-				fmt.Printf("Response Body: %s\n", body)
 				return
 			}
 
@@ -58,17 +64,21 @@ func TestMakeTransactionConcurrent(t *testing.T) {
 			var response struct {
 				Message string `json:"message"`
 			}
-			err = json.NewDecoder(resp.Body).Decode(&response)
+			err = json.Unmarshal(body, &response)
 			if err != nil {
 				t.Errorf("Failed to decode response: %v", err)
 				return
 			}
 
 			// Print the response message to the console
-			fmt.Printf("Response Message: %s\n", response.Message)
+			fmt.Printf("Response Status: %d, Response Message: %s \n", resp.StatusCode, response.Message)
+
 		}()
 	}
 
 	// Wait for all requests to complete
-	time.Sleep(2 * time.Second) // Add a delay to ensure all requests are processed
+	wg.Wait()
+
+	// Add a delay or wait for sufficient time to ensure all transactions are processed
+	time.Sleep(2 * time.Second)
 }

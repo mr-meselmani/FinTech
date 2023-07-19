@@ -6,10 +6,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/mr-meselmani/FinTech/internal/handler"
+	"github.com/mr-meselmani/FinTech/pkg/banner"
 	"github.com/mr-meselmani/FinTech/pkg/router"
 )
 
 func main() {
+	// Write Banner
+	banner.WriteBanner()
+
 	// Setup Router
 	r := mux.NewRouter().StrictSlash(true)
 
