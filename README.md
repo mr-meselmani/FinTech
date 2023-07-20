@@ -41,7 +41,6 @@ The FinTech API is a RESTful API that provides functionality for managing accoun
 - `go.mod` and `go.sum`: Files related to Go module management.
 
 - `runApi.bat`: Batch script to automate the server start process.
-- `runTests.bat`: Batch script to automate running the tests after the server is running.
 
 ## Concurrency Support
 
@@ -111,15 +110,31 @@ go run cmd/main.go
 
 ## Testing
 
-Execute the **runTests.bat** to automate testing processes OR skip this line & continue manually.
-
 To run the tests for the API, navigate to the project directory and execute the following command:
+
+1. Test GET `http://localhost:3000/` will send 100 req to the endpoint by running:
+
+```
+go test ./tests/home_test.go -v
+```
+
+2. Test GET `http://localhost:3000/accounts` will send 100 req by running:
+
+```
+go test ./tests/list_accounts_test.go -v
+```
+
+3. Test POST `http://localhost:3000/transfer` will send 100 req by running:
+
+```
+go test ./tests/make_transaction_test.go -v
+```
+
+4. Test them all ( this will depend on your cpu ) by running:
 
 ```
 go test ./tests/... -v
 ```
-
-This will execute all the tests in the `tests` package and display the results.
 
 ## Dependencies
 
