@@ -143,3 +143,9 @@ The FinTech API uses the following third-party libraries:
 - `github.com/gorilla/mux`: A powerful URL router and dispatcher for building HTTP services.
 - `github.com/common-nighthawk/go-figure`: A package for displaying banners in the application.
 - `github.com/fatih/color`: A package for colorizing terminal output.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
